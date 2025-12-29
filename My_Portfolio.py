@@ -407,8 +407,11 @@ elif selected_page == "Contact":
             st.text_input("Your Name")
             st.text_input("Your Email")
             st.text_area("Message")
+
+            # هنا التعديل: استخدام Toast بدل Success
             if st.form_submit_button("Send Message"):
-                st.success("Message Sent Successfully! 🚀")
+                st.toast("Message Sent Successfully! 🚀", icon="🎉")
+
     with c2:
         st.markdown(f"""
         <div class="custom-card">
