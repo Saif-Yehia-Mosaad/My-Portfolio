@@ -7,7 +7,7 @@ import os
 # =========================================================
 st.set_page_config(
     page_title="Saif Aboseada | Portfolio",
-    page_icon="🎨",
+    page_icon="🚀",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -64,7 +64,7 @@ with st.sidebar:
             primary_color = default_primary
 
 # =========================================================
-# 4. منطق CSS (FIXED FOR MOBILE & INPUTS)
+# 4. تنسيق CSS (الحل النهائي للصورة)
 # =========================================================
 
 if design_mode == "Creative Gradient":
@@ -100,96 +100,43 @@ st.markdown(f"""
         color: #F8FAFC;
     }}
 
-    /* =========================================
-       1. IMPROVED NAVBAR (MOBILE GRID SYSTEM)
-       ========================================= */
+    /* Navbar Styling */
     div[data-testid="stRadio"] > div {{
-        display: flex; 
-        justify-content: center; 
-        gap: 10px;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(10px);
-        padding: 10px; 
-        border-radius: 20px; 
-        border: 1px solid rgba(255,255,255,0.1);
-        margin-top: 10px;
-        flex-wrap: wrap; /* يسمح بالالتفاف */
+        display: flex; justify-content: center; gap: 10px;
+        background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
+        padding: 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+        margin-top: 10px; flex-wrap: wrap;
     }}
-
     div[role="radiogroup"] label {{
-        background: transparent;
-        padding: 8px 16px; 
-        border-radius: 12px; 
-        transition: 0.3s; 
-        border: 1px solid transparent; 
-        color: #94A3B8; 
-        font-weight: 500;
-        text-align: center;
-        margin: 0 !important;
+        background: transparent; padding: 8px 16px; border-radius: 12px; transition: 0.3s; 
+        border: 1px solid transparent; color: #94A3B8; font-weight: 500; margin: 0 !important;
     }}
-
-    /* إخفاء الدوائر */
     div[role="radiogroup"] label > div:first-child {{ display: None; }}
-
     div[role="radiogroup"] label:hover {{ color: var(--primary); background: rgba(255,255,255,0.05); }}
     div[role="radiogroup"] label[data-checked="true"] {{
         background: var(--primary) !important; color: #0F172A !important; font-weight: bold;
         box-shadow: 0 0 15px {primary_color}60;
     }}
 
-    /* === MOBILE TWEAKS === */
+    /* Mobile Media Query */
     @media (max-width: 600px) {{
         div[data-testid="stRadio"] > div {{
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 زراير في الصف */
-            gap: 8px;
-            width: 100%;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%;
         }}
-        div[role="radiogroup"] label {{
-            width: 100%;
-            padding: 6px 4px; /* تقليل الحواف */
-            font-size: 0.8rem;
-        }}
+        div[role="radiogroup"] label {{ width: 100%; padding: 6px 4px; font-size: 0.8rem; text-align: center; }}
+        h1 {{ font-size: 2.5rem !important; }}
     }}
 
-    /* =========================================
-       2. INPUT FIELDS & FORM STYLING
-       ========================================= */
-    /* جعل الحقول شفافة لتناسب الثيم */
-    .stTextInput input, .stTextArea textarea {{
-        background-color: rgba(0, 0, 0, 0.3) !important;
-        color: white !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 10px !important;
-    }}
-    .stTextInput input:focus, .stTextArea textarea:focus {{
-        border-color: var(--primary) !important;
-        box-shadow: 0 0 10px {primary_color}40 !important;
-    }}
-
-    /* تنسيق رسالة النجاح */
-    .stAlert {{
-        background-color: rgba(16, 185, 129, 0.1) !important;
-        border: 1px solid #10B981 !important;
-        color: #10B981 !important;
-        border-radius: 12px !important;
-    }}
-
-    /* =========================================
-       3. GENERAL LAYOUT & CARDS
-       ========================================= */
+    /* Cards & Typography */
     .custom-card {{
         {card_css}
         border-radius: 16px; padding: 24px; margin-bottom: 20px; 
-        transition: transform 0.3s ease;
+        transition: transform 0.3s ease; height: 100%;
     }}
-    .custom-card:hover {{ 
-        transform: translateY(-5px); border-color: var(--primary);
-    }}
+    .custom-card:hover {{ transform: translateY(-5px); border-color: var(--primary); }}
 
-    /* العناوين */
     h1 {{ 
-        font-size: 3rem !important; 
+        font-size: 3.5rem !important; 
         background: linear-gradient(to right, #FFFFFF, #94A3B8);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }}
@@ -199,25 +146,45 @@ st.markdown(f"""
         color: #F1F5F9; font-size: 1.8rem; font-weight: 700;
     }}
 
-    /* =========================================
-       4. IMAGES (PERFECT CIRCLE)
-       ========================================= */
-    .nav-logo {{ width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; aspect-ratio: 1/1; }}
-    .sidebar-img {{ width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; aspect-ratio: 1/1; display: block; margin: 0 auto; }}
-
-    .profile-hero-img {{
-        width: 220px; height: 220px; border-radius: 50%; 
-        border: 4px solid var(--primary); 
-        object-fit: cover; aspect-ratio: 1/1;
-        display: block; margin: 0 auto;
-        box-shadow: 0 0 50px {primary_color}40;
+    /* ========================================================
+       THE PERFECT CIRCLE FIX (الحل النهائي للصورة)
+       ======================================================== */
+    .nav-logo {{ 
+        width: 45px !important; 
+        height: 45px !important; 
+        border-radius: 50% !important; 
+        border: 2px solid var(--primary); 
+        object-fit: cover !important; 
+        object-position: center top !important;
     }}
 
-    /* Badges */
+    .sidebar-img {{ 
+        width: 100px !important; 
+        height: 100px !important; 
+        border-radius: 50% !important; 
+        border: 2px solid var(--primary); 
+        object-fit: cover !important; 
+        object-position: center top !important;
+        display: block; margin: 0 auto; 
+    }}
+
+    .profile-hero-img {{
+        width: 220px !important;        /* عرض ثابت */
+        height: 220px !important;       /* نفس الطول بالظبط */
+        border-radius: 50% !important;  /* دائرة كاملة */
+        border: 4px solid var(--primary); 
+        object-fit: cover !important;   /* يقص الزيادات ويملا الفراغات */
+        object-position: center top !important; /* يركز على الوش */
+        display: block; 
+        margin: 0 auto;
+        box-shadow: 0 0 50px {primary_color}40;
+    }}
+    /* ======================================================== */
+
     .skill-badge {{
         background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); 
-        color: #E2E8F0; padding: 5px 12px; border-radius: 30px; 
-        font-size: 0.8em; display: inline-block; margin: 3px; backdrop-filter: blur(5px);
+        color: #E2E8F0; padding: 6px 14px; border-radius: 30px; 
+        font-size: 0.85em; display: inline-block; margin: 4px; backdrop-filter: blur(5px);
     }}
     </style>
 """, unsafe_allow_html=True)
@@ -249,7 +216,7 @@ with col_nav:
         label_visibility="collapsed"
     )
 
-st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)  # فاصل لمنع التداخل
+st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
 
 with st.sidebar:
     st.markdown("<br>", unsafe_allow_html=True)
@@ -261,7 +228,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 # =========================================================
-# 6. المحتوى
+# 6. المحتوى الكامل (Full Data)
 # =========================================================
 
 if selected_page == "Profile":
@@ -274,8 +241,7 @@ if selected_page == "Profile":
                 <h1>SAIF ABOSEADA</h1>
                 <div style="font-size: 1.5rem; color: {primary_color}; font-weight: 600; margin-top: 5px;">.NET Backend Developer</div>
                 <p style="color: #94A3B8; font-size: 1.1em; margin-top: 15px; line-height: 1.6;">
-                    Building scalable, secure, and high-performance APIs. 
-                    Specialized in <b>ASP.NET Core</b> architecture and database optimization.
+                    Port Said, Egypt | +20 127-851-3846
                 </p>
                 <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
                     <a href="https://linkedin.com/in/saif-yehia" target="_blank" style="background:{primary_color}; color:#0F172A; padding:10px 20px; border-radius:30px; font-weight:bold; text-decoration:none;">LinkedIn</a>
@@ -284,89 +250,159 @@ if selected_page == "Profile":
             </div>
         """, unsafe_allow_html=True)
 
-    st.markdown("<div class='section-header'>About Me</div>", unsafe_allow_html=True)
-    st.markdown(
-        """<div style="color: #CBD5E1; line-height: 1.8;">Passionate <b>.NET Backend Developer</b>... (Your Summary Here)</div>""",
-        unsafe_allow_html=True)
+    st.markdown("<div class='section-header'>Professional Summary</div>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="color: #CBD5E1; line-height: 1.8; font-size: 1.05em;">
+    Passionate <b>.NET Backend Developer</b> and Computer Science student with specialized expertise in building scalable Web
+    APIs using <b>ASP.NET Core</b> and <b>SQL Server</b>. Proficient in implementing <b>Clean Architecture</b>, Repository Pattern, and
+    securing RESTful services. Seeking a challenging backend or full-stack position to apply advanced C# skills in
+    developing high-performance enterprise solutions.
+    </div>
+    """, unsafe_allow_html=True)
 
 elif selected_page == "Experience":
-    st.markdown("<div class='section-header'>Experience</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-header'>Professional Experience</div>", unsafe_allow_html=True)
 
 
     def job_card(role, company, date, tasks):
-        task_html = "".join([f"<li style='margin-bottom:5px;'>{t}</li>" for t in tasks])
+        task_html = "".join([f"<li style='margin-bottom:8px; line-height: 1.6;'>{t}</li>" for t in tasks])
         return f"""
         <div class="custom-card">
             <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                <div><div style="font-weight:700; font-size:1.1em; color:#fff;">{role}</div><div style="color:{primary_color};">{company}</div></div>
-                <div style="background:rgba(255,255,255,0.1); padding:4px 10px; border-radius:15px; font-size:0.8em;">{date}</div>
+                <div><div style="font-weight:700; font-size:1.2em; color:#fff;">{role}</div><div style="color:{primary_color}; font-weight:600;">{company}</div></div>
+                <div style="background:rgba(255,255,255,0.1); padding:6px 12px; border-radius:20px; font-size:0.85em;">{date}</div>
             </div>
             <ul style="padding-left:20px; color:#94A3B8;">{task_html}</ul>
         </div>
         """
 
 
-    st.markdown(job_card("Full Stack .NET Trainee", "DEPI", "Nov 2025 - Present",
-                         ["Backend Dev using ASP.NET Core.", "Database Schema Design."]), unsafe_allow_html=True)
+    st.markdown(job_card(
+        "Full Stack .NET Development Trainee",
+        "Digital Egypt Pioneers Initiative (DEPI)",
+        "Nov 2025 - Present",
+        [
+            "Specialized in Backend Development using ASP.NET Core and SQL Server.",
+            "Collaborated with a team to design database schemas and implement business logic for enterprise-level applications.",
+            "Mastered version control workflows using Git and GitHub in an Agile environment."
+        ]
+    ), unsafe_allow_html=True)
 
 elif selected_page == "Projects":
-    st.markdown("<div class='section-header'>Projects</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-header'>Technical Projects</div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
 
 
     def proj(title, type_tag, items, stack):
-        items_html = "".join([f"<li>{i}</li>" for i in items])
+        items_html = "".join([f"<li style='margin-bottom:5px; line-height: 1.5;'>{i}</li>" for i in items])
         tags = "".join([f"<span class='skill-badge'>{s}</span>" for s in stack])
         return f"""
         <div class="custom-card" style="height:100%;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="font-weight:700; color:#fff;">{title}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <div style="font-weight:700; font-size:1.15em; color:#fff;">{title}</div>
                 <span style="border:1px solid {primary_color}; color:{primary_color}; font-size:0.7em; padding:2px 6px; border-radius:4px;">{type_tag}</span>
             </div>
-            <ul style="padding-left:15px; font-size:0.9em; color:#94A3B8; margin-top:10px;">{items_html}</ul>
-            <div style="margin-top:15px;">{tags}</div>
+            <ul style="padding-left:15px; font-size:0.95em; color:#94A3B8; margin-bottom:20px;">{items_html}</ul>
+            <div style="margin-top:auto; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">{tags}</div>
         </div>
         """
 
 
     with c1:
-        st.markdown(proj("E-Commerce API", "Backend", ["ASP.NET Core & SQL.", "Repo Pattern."], ["C#", "SQL", "Redis"]),
-                    unsafe_allow_html=True)
+        st.markdown(proj(
+            "E-Commerce RESTful API", "Backend",
+            [
+                "Developed a comprehensive API for an online store using ASP.NET Core Web API and SQL Server.",
+                "Implemented the Repository Pattern and Unit of Work to decouple business logic from data access.",
+                "Designed complex database schemas including products, categories, orders, and payment transactions."
+            ],
+            ["ASP.NET Core", "SQL Server", "Repo Pattern", "Unit of Work"]
+        ), unsafe_allow_html=True)
+        st.markdown(proj(
+            "Daily Quotes Application", "Full Stack",
+            [
+                "Developed a RESTful API using ASP.NET Core to serve dynamic content to a mobile frontend.",
+                "Designed robust endpoints for CRUD operations and integrated with a Flutter mobile application."
+            ],
+            ["ASP.NET Core", "REST API", "Flutter Integration"]
+        ), unsafe_allow_html=True)
+        st.markdown(proj(
+            "Student Management System", "MVC",
+            [
+                "Built a classic management application using ASP.NET Core MVC.",
+                "Demonstrated strong grasp of Relational Database concepts (One-to-Many, Many-to-Many relationships)."
+            ],
+            ["ASP.NET Core MVC", "Relational DB", "EF Core"]
+        ), unsafe_allow_html=True)
+
     with c2:
-        st.markdown(proj("Medical System", "Backend", ["Concurrency Control.", "JWT Auth."], ["Web API", "Hangfire"]),
-                    unsafe_allow_html=True)
+        st.markdown(proj(
+            "Medical Clinic Booking System", "Backend",
+            [
+                "Engineered a booking management system allowing patients to schedule appointments with doctors.",
+                "Handled concurrency issues and implemented validation logic to prevent double-booking.",
+                "Secured the API using JWT Authentication and Role-Based Access Control (RBAC)."
+            ],
+            ["Web API", "JWT Auth", "Concurrency Control", "RBAC"]
+        ), unsafe_allow_html=True)
+        st.markdown(proj(
+            "Authentication & Authorization Service", "Microservice",
+            [
+                "Built a dedicated identity service using ASP.NET Core Identity and JWT tokens.",
+                "Implemented custom middleware for error handling and request logging."
+            ],
+            ["ASP.NET Core Identity", "JWT", "Middleware", "Logging"]
+        ), unsafe_allow_html=True)
 
 elif selected_page == "Skills":
-    st.markdown("<div class='section-header'>Skills</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-header'>Technical Skills</div>", unsafe_allow_html=True)
 
 
     def skill(title, icon, s_list):
         badges = "".join([f"<span class='skill-badge'>{s}</span>" for s in s_list])
         st.markdown(
-            f"""<div style="margin-bottom:20px;"><h4 style="color:#E2E8F0;"><i class="{icon}" style="color:{primary_color}; margin-right:10px;"></i> {title}</h4><div>{badges}</div></div>""",
+            f"""<div style="margin-bottom:25px;"><h4 style="color:#E2E8F0;"><i class="{icon}" style="color:{primary_color}; margin-right:10px;"></i> {title}</h4><div style="margin-top:10px;">{badges}</div></div>""",
             unsafe_allow_html=True)
 
 
-    skill("Core", "fa-solid fa-code", ["C#", ".NET 8", "ASP.NET Core"])
-    skill("Data", "fa-solid fa-database", ["SQL Server", "EF Core"])
+    skill("Core Technologies", "fa-solid fa-code",
+          ["C#", ".NET 6/7/8", "ASP.NET Core Web API", "LINQ", "Entity Framework Core (EF Core)"])
+    skill("Database Management", "fa-solid fa-database",
+          ["Microsoft SQL Server", "T-SQL", "Database Design", "Normalization", "Relationships"])
+    skill("Architecture & Patterns", "fa-solid fa-sitemap",
+          ["MVC", "RESTful APIs", "Repository Pattern", "Unit of Work", "Dependency Injection (DI)"])
+    skill("Tools & DevOps", "fa-solid fa-wrench", ["Git", "GitHub", "Postman", "Swagger UI", "Docker (Basics)"])
+    skill("Testing", "fa-solid fa-vial", ["xUnit", "NUnit", "Unit Testing fundamentals"])
 
 elif selected_page == "Education":
-    st.markdown("<div class='section-header'>Education</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-header'>Education & Certifications</div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
-        st.markdown(
-            f"""<div class="custom-card"><div><i class="fa-solid fa-graduation-cap" style="color:{primary_color}"></i> Bachelor of CS</div><div style="margin-top:5px; color:#94A3B8;">Suez Canal University</div></div>""",
-            unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="custom-card">
+            <div><i class="fa-solid fa-graduation-cap" style="color:{primary_color}; font-size:1.2em;"></i> <span style="font-weight:700; font-size:1.1em; color:#fff;">Bachelor of Computer Science (CS)</span></div>
+            <div style="margin-top:10px; color:{primary_color}; font-weight:600;">Faculty of Computers and Informatics, Suez Canal University</div>
+            <div style="font-size:0.9em; margin-top:5px; margin-bottom:15px; color:#94A3B8;">Oct 2022 - Present</div>
+            <div style="color:#CBD5E1; line-height:1.6;">Focus: Object-Oriented Programming (OOP), Data Structures, Algorithms, and Distributed Systems.</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     with c2:
-        st.markdown(
-            f"""<div class="custom-card"><div><i class="fa-solid fa-certificate" style="color:{primary_color}"></i> Certifications</div><ul style="color:#94A3B8; margin-top:5px; padding-left:20px;"><li>.NET Web Dev</li><li>Frontend Basics</li></ul></div>""",
-            unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="custom-card">
+            <div style="margin-bottom:15px;"><i class="fa-solid fa-certificate" style="color:{primary_color}; font-size:1.2em;"></i> <span style="font-weight:700; font-size:1.1em; color:#fff;">Certifications</span></div>
+            <ul style="color:#94A3B8; padding-left:20px; line-height:1.7;">
+                <li><b>.NET Web Development:</b> 120-hour intensive course covering Advanced C#, SQL Server, and ASP.NET Core.</li>
+                <li><b>Frontend Web Development:</b> 162-hour course covering HTML5, CSS3, JavaScript, and Sass.</li>
+                <li><b>AI for Beginners:</b> Issued by HP LIFE.</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
 elif selected_page == "Contact":
     st.markdown("<div class='section-header'>Get In Touch</div>", unsafe_allow_html=True)
     c1, c2 = st.columns([1.5, 1])
     with c1:
-        # فورم بتصميم أفضل
         with st.form("contact_form"):
             st.text_input("Your Name")
             st.text_input("Your Email")
@@ -374,6 +410,10 @@ elif selected_page == "Contact":
             if st.form_submit_button("Send Message"):
                 st.success("Message Sent Successfully! 🚀")
     with c2:
-        st.markdown(
-            f"""<div class="custom-card"><div style="margin-bottom:10px;"><i class="fa-solid fa-envelope" style="color:{primary_color}"></i> saifyehia58@gmail.com</div><div><i class="fa-solid fa-phone" style="color:{primary_color}"></i> +20 127-851-3846</div></div>""",
-            unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="custom-card">
+            <div style="margin-bottom:15px;"><i class="fa-solid fa-envelope" style="color:{primary_color}; margin-right:10px;"></i> <a href="mailto:saifyehia58@gmail.com" style="color:#fff; text-decoration:none;">saifyehia58@gmail.com</a></div>
+            <div style="margin-bottom:15px;"><i class="fa-solid fa-phone" style="color:{primary_color}; margin-right:10px;"></i> +20 127-851-3846</div>
+            <div><i class="fa-solid fa-location-dot" style="color:{primary_color}; margin-right:10px;"></i> Port Said, Egypt</div>
+        </div>
+        """, unsafe_allow_html=True)
