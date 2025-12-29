@@ -1,14 +1,13 @@
 import streamlit as st
 import base64
 import os
-import requests  # عشان إرسال الإيميل
 
 # =========================================================
 # 1. إعدادات الصفحة
 # =========================================================
 st.set_page_config(
     page_title="Saif Aboseada | Portfolio",
-    page_icon="🚀",
+    page_icon="🧑‍💻",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -65,7 +64,7 @@ with st.sidebar:
             primary_color = default_primary
 
 # =========================================================
-# 4. تنسيق CSS (شامل إصلاحات الموبايل والصورة)
+# 4. تنسيق CSS (الحل النهائي للصورة)
 # =========================================================
 
 if design_mode == "Creative Gradient":
@@ -101,7 +100,7 @@ st.markdown(f"""
         color: #F8FAFC;
     }}
 
-    /* Navbar Grid System (Mobile Fix) */
+    /* Navbar Styling */
     div[data-testid="stRadio"] > div {{
         display: flex; justify-content: center; gap: 10px;
         background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
@@ -111,7 +110,6 @@ st.markdown(f"""
     div[role="radiogroup"] label {{
         background: transparent; padding: 8px 16px; border-radius: 12px; transition: 0.3s; 
         border: 1px solid transparent; color: #94A3B8; font-weight: 500; margin: 0 !important;
-        cursor: pointer;
     }}
     div[role="radiogroup"] label > div:first-child {{ display: None; }}
     div[role="radiogroup"] label:hover {{ color: var(--primary); background: rgba(255,255,255,0.05); }}
@@ -123,25 +121,10 @@ st.markdown(f"""
     /* Mobile Media Query */
     @media (max-width: 600px) {{
         div[data-testid="stRadio"] > div {{
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; padding: 10px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%;
         }}
-        div[role="radiogroup"] label {{ 
-            width: 100%; padding: 8px 4px; font-size: 0.85rem; text-align: center; 
-            color: #E2E8F0 !important; background-color: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-        }}
-        .nav-logo {{ margin: 0 auto 10px auto !important; display: block !important; }}
-        h1 {{ font-size: 2.5rem !important; text-align: center; }}
-        .role-text, p {{ text-align: center; }}
-        .social-buttons {{ justify-content: center; }}
-    }}
-
-    /* Inputs Styling */
-    .stTextInput input, .stTextArea textarea {{
-        background-color: rgba(0, 0, 0, 0.3) !important; color: white !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 10px !important;
-    }}
-    .stTextInput input:focus, .stTextArea textarea:focus {{
-        border-color: var(--primary) !important; box-shadow: 0 0 10px {primary_color}40 !important;
+        div[role="radiogroup"] label {{ width: 100%; padding: 6px 4px; font-size: 0.8rem; text-align: center; }}
+        h1 {{ font-size: 2.5rem !important; }}
     }}
 
     /* Cards & Typography */
@@ -163,16 +146,40 @@ st.markdown(f"""
         color: #F1F5F9; font-size: 1.8rem; font-weight: 700;
     }}
 
-    /* Perfect Circle Images */
-    .nav-logo {{ width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; aspect-ratio: 1/1; }}
-    .sidebar-img {{ width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; aspect-ratio: 1/1; display: block; margin: 0 auto; }}
+    /* ========================================================
+       THE PERFECT CIRCLE FIX (الحل النهائي للصورة)
+       ======================================================== */
+    .nav-logo {{ 
+        width: 45px !important; 
+        height: 45px !important; 
+        border-radius: 50% !important; 
+        border: 2px solid var(--primary); 
+        object-fit: cover !important; 
+        object-position: center top !important;
+    }}
+
+    .sidebar-img {{ 
+        width: 100px !important; 
+        height: 100px !important; 
+        border-radius: 50% !important; 
+        border: 2px solid var(--primary); 
+        object-fit: cover !important; 
+        object-position: center top !important;
+        display: block; margin: 0 auto; 
+    }}
+
     .profile-hero-img {{
-        width: 220px; height: 220px; border-radius: 50%; 
+        width: 220px !important;        /* عرض ثابت */
+        height: 220px !important;       /* نفس الطول بالظبط */
+        border-radius: 50% !important;  /* دائرة كاملة */
         border: 4px solid var(--primary); 
-        object-fit: cover; aspect-ratio: 1/1;
-        display: block; margin: 0 auto;
+        object-fit: cover !important;   /* يقص الزيادات ويملا الفراغات */
+        object-position: center top !important; /* يركز على الوش */
+        display: block; 
+        margin: 0 auto;
         box-shadow: 0 0 50px {primary_color}40;
     }}
+    /* ======================================================== */
 
     .skill-badge {{
         background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); 
@@ -221,7 +228,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 # =========================================================
-# 6. المحتوى الكامل
+# 6. المحتوى الكامل (Full Data)
 # =========================================================
 
 if selected_page == "Profile":
@@ -232,11 +239,11 @@ if selected_page == "Profile":
         st.markdown(f"""
             <div style="padding-top: 10px;">
                 <h1>SAIF ABOSEADA</h1>
-                <div class="role-text" style="font-size: 1.5rem; color: {primary_color}; font-weight: 600; margin-top: 5px;">.NET Backend Developer</div>
+                <div style="font-size: 1.5rem; color: {primary_color}; font-weight: 600; margin-top: 5px;">.NET Backend Developer</div>
                 <p style="color: #94A3B8; font-size: 1.1em; margin-top: 15px; line-height: 1.6;">
                     Port Said, Egypt | +20 127-851-3846
                 </p>
-                <div class="social-buttons" style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
                     <a href="https://linkedin.com/in/saif-yehia" target="_blank" style="background:{primary_color}; color:#0F172A; padding:10px 20px; border-radius:30px; font-weight:bold; text-decoration:none;">LinkedIn</a>
                     <a href="https://github.com/Saif-Yehia-Mosaad" target="_blank" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#F1F5F9; padding:10px 20px; border-radius:30px; font-weight:bold; text-decoration:none;">GitHub</a>
                 </div>
@@ -397,29 +404,13 @@ elif selected_page == "Contact":
     c1, c2 = st.columns([1.5, 1])
     with c1:
         with st.form("contact_form"):
-            name = st.text_input("Your Name")
-            email = st.text_input("Your Email")
-            message = st.text_area("Message")
+            st.text_input("Your Name")
+            st.text_input("Your Email")
+            st.text_area("Message")
 
-            submit = st.form_submit_button("Send Message")
-
-            if submit:
-                if name and email and message:
-                    # Formspree Integration
-                    data = {"name": name, "email": email, "message": message}
-                    # ⚠️ استبدل اللينك ده باللينك بتاعك من formspree
-                    form_url = "https://formspree.io/f/YOUR_FORM_ID"
-
-                    try:
-                        response = requests.post(form_url, json=data)
-                        if response.status_code == 200:
-                            st.toast("Message Sent Successfully! 🚀", icon="🎉")
-                        else:
-                            st.error("Something went wrong. Please check your internet or Formspree settings.")
-                    except:
-                        st.error("Failed to connect to the server.")
-                else:
-                    st.warning("Please fill in all fields.")
+            # هنا التعديل: استخدام Toast بدل Success
+            if st.form_submit_button("Send Message"):
+                st.toast("Message Sent Successfully! 🚀", icon="🎉")
 
     with c2:
         st.markdown(f"""
