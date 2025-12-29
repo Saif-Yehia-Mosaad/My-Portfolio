@@ -1,7 +1,7 @@
 import streamlit as st
 import base64
 import os
-import requests  # ضروري لإرسال الإيميلات
+import requests
 
 # =========================================================
 # 1. إعدادات الصفحة
@@ -28,18 +28,19 @@ if 'design_mode' not in st.session_state:
     st.session_state['design_mode'] = "Creative Gradient"
 
 # =========================================================
-# 3. لوحة الأدمن (مؤمنة بـ Secrets)
+# 3. لوحة الأدمن (Secure Version)
 # =========================================================
 with st.sidebar:
     st.markdown("### ⚙️ Settings")
     with st.expander("🔒 Admin Access"):
         admin_pass = st.text_input("Enter Admin Password", type="password")
 
-        # --- تعديل الأمان: قراءة الباسورد من Secrets ---
-        # إذا لم يكن هناك secrets ملف، سيستخدم "12345" كاحتياطي للاختبار
-        secret_password = st.secrets.get("admin_password", "12345")
+        # --- التعديل النهائي: قراءة الباسورد حصرياً من Secrets ---
+        # لن يتم وضع أي باسورد احتياطي هنا
+        secret_password = st.secrets.get("admin_password")
 
-        if admin_pass == secret_password:
+        # التحقق من الباسورد
+        if secret_password is not None and admin_pass == secret_password:
             st.success("Unlocked! 🔓")
             uploaded_file = st.file_uploader("Upload Photo", type=['jpg', 'png', 'jpeg'])
             if uploaded_file:
@@ -66,8 +67,12 @@ with st.sidebar:
         elif admin_pass != "":
             st.error("Wrong Password ❌")
 
-        # استخدام القيم الافتراضية في حالة عدم الدخول كأدمن
-        if admin_pass != secret_password:
+        # رسالة تنبيه لك أنت فقط لو نسيت تعمل ملف السيكرتس
+        if secret_password is None:
+            st.warning("⚠️ Please set 'admin_password' in .streamlit/secrets.toml")
+
+        # استخدام القيم الافتراضية للزوار
+        if secret_password is None or admin_pass != secret_password:
             design_mode = "Creative Gradient"
             gradient_1 = default_gradient_1
             gradient_2 = default_gradient_2
@@ -75,7 +80,7 @@ with st.sidebar:
             primary_color = default_primary
 
 # =========================================================
-# 4. تنسيق CSS (إصلاحات الموبايل والصورة الدائرية)
+# 4. تنسيق CSS
 # =========================================================
 
 if design_mode == "Creative Gradient":
@@ -130,7 +135,7 @@ st.markdown(f"""
         box-shadow: 0 0 15px {primary_color}60;
     }}
 
-    /* --- MOBILE MEDIA QUERY (إصلاحات الموبايل) --- */
+    /* Mobile Media Query */
     @media (max-width: 600px) {{
         div[data-testid="stRadio"] > div {{
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; padding: 10px;
@@ -173,9 +178,7 @@ st.markdown(f"""
         color: #F1F5F9; font-size: 1.8rem; font-weight: 700;
     }}
 
-    /* ========================================================
-       THE PERFECT CIRCLE FIX (الحل النهائي للصورة)
-       ======================================================== */
+    /* Perfect Circle Images */
     .nav-logo {{ 
         width: 45px !important; height: 45px !important; 
         border-radius: 50% !important; border: 2px solid var(--primary); 
@@ -431,8 +434,7 @@ elif selected_page == "Contact":
 
             if submit:
                 if name and email and message:
-                    # --- تعديل الإيميل الفعلي (Formspree) ---
-                    # ⚠️ هام جداً: استبدل اللينك ده باللينك الخاص بك من موقع formspree.io
+                    # --- Formspree (تأكد من استبدال اللينك) ---
                     form_url = "https://formspree.io/f/YOUR_FORM_ID"
 
                     try:
