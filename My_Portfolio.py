@@ -14,84 +14,81 @@ st.set_page_config(
 )
 
 # =========================================================
-# 2. القيم الافتراضية (Fallback Values)
+# 2. القيم الافتراضية
 # =========================================================
 default_primary = "#D4AF37"
 default_bg = "#0E1117"
 default_card = "#161B22"
 default_text = "#E6EDF3"
 
-# متغيرات سنقوم بتحديثها لو الأدمن دخل
+# قراءة المتغيرات
 primary_color = default_primary
 bg_color = default_bg
 card_bg_color = default_card
 text_color = default_text
-uploaded_file = None  # متغير لتخزين الصورة المرفوعة
+
+# اسم الملف اللي هنحفظ الصورة فيه
+PROFILE_IMAGE_PATH = "profile.jpg"
 
 # =========================================================
-# 3. القائمة الجانبية (ADMIN ONLY)
+# 3. القائمة الجانبية (ADMIN ONLY) - الحفظ الدائم
 # =========================================================
 with st.sidebar:
-    st.markdown("### ⚙️ Admin Control")
+    st.markdown("### ⚙️ Settings")
 
-    # حماية المنطقة بكلمة سر
-    # لن يظهر أي شيء تحت هذا الصندوق إلا لو الباسورد صح
-    admin_pass = st.text_input("Enter Admin Password", type="password")
+    # القائمة المنسدلة للأدمن
+    with st.expander("🔒 Admin Access"):
+        admin_pass = st.text_input("Enter Admin Password", type="password")
 
-    if admin_pass == "12345":  # <--- غير الباسورد ده براحتك
-        st.success("Access Granted! ✅")
-        st.markdown("---")
+        if admin_pass == "12345":  # <--- الباسورد
+            st.success("Unlocked! ✅")
+            st.markdown("---")
 
-        st.markdown("#### 📸 Profile Photo")
-        # هنا تقدر ترفع صورة من جهازك
-        uploaded_file = st.file_uploader("Upload New Photo", type=['jpg', 'png', 'jpeg'])
+            st.markdown("#### 📸 Change Profile Photo")
+            # رفع الصورة
+            uploaded_file = st.file_uploader("Upload New Photo", type=['jpg', 'png', 'jpeg'])
 
-        st.markdown("---")
-        st.markdown("#### 🎨 Theme Colors")
-        # التحكم في الألوان
-        primary_color = st.color_picker("Accent (Gold)", default_primary)
-        bg_color = st.color_picker("Background", default_bg)
-        card_bg_color = st.color_picker("Card BG", default_card)
-        text_color = st.color_picker("Text Color", default_text)
+            # --- التعديل السحري للحفظ ---
+            if uploaded_file is not None:
+                # 1. حفظ الملف على الهارد ديسك فوراً
+                with open(PROFILE_IMAGE_PATH, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
 
-    elif admin_pass != "":
-        st.error("Access Denied ❌")
+                st.success("Image Saved Permanently! 🎉")
+                # 2. عمل ريفريش للصفحة عشان الصورة الجديدة تظهر
+                st.rerun()
+
+            st.markdown("---")
+            st.markdown("#### 🎨 Theme Colors")
+            primary_color = st.color_picker("Accent (Gold)", default_primary)
+            bg_color = st.color_picker("Background", default_bg)
+            card_bg_color = st.color_picker("Card BG", default_card)
+            text_color = st.color_picker("Text Color", default_text)
+
+        elif admin_pass != "":
+            st.error("Wrong Password ❌")
 
 
 # =========================================================
-# 4. معالجة الصور (المنطق الذكي)
+# 4. دالة قراءة الصورة (من الملف المحفوظ)
 # =========================================================
-def get_image_data(upload_obj, local_filename):
-    """
-    دالة بتشوف الصورة فين بالظبط:
-    1. هل الأدمن رفع صورة دلوقتي؟ -> اعرضها
-    2. مفيش؟ طب هل فيه صورة في الفولدر اسمها profile.jpg؟ -> اعرضها
-    3. مفيش؟ -> اعرض صورة افتراضية (أفاتار)
-    """
-    if upload_obj is not None:
-        # الحالة الأولى: رفع صورة حية
-        bytes_data = upload_obj.getvalue()
-        encoded = base64.b64encode(bytes_data).decode()
-        return f"data:image/png;base64,{encoded}"
-
-    elif os.path.exists(local_filename):
-        # الحالة الثانية: صورة محفوظة في الفولدر
-        with open(local_filename, "rb") as f:
+def get_image_src(local_path):
+    # دائماً بنحاول نقرأ من الملف المحفوظ على الجهاز
+    if os.path.exists(local_path):
+        with open(local_path, "rb") as f:
             data = f.read()
         encoded = base64.b64encode(data).decode()
         return f"data:image/jpg;base64,{encoded}"
 
-    else:
-        # الحالة الثالثة: صورة افتراضية
-        return "https://ui-avatars.com/api/?name=Saif+Aboseada&background=D4AF37&color=000&size=256"
+    # لو مفيش ملف محفوظ، نعرض الأفاتار
+    return "https://ui-avatars.com/api/?name=Saif+Aboseada&background=D4AF37&color=000&size=256"
 
 
-# اسم الصورة اللي في الفولدر (لو حبيت تحطها يدوي)
-local_image_path = "profile.jpg"
-img_src = get_image_data(uploaded_file, local_image_path)
+# استدعاء الدالة
+img_src = get_image_src(PROFILE_IMAGE_PATH)
 
 # =========================================================
-# 5. تنسيق CSS (تطبيق الألوان اللي اخترتها)
+# 5. تنسيق CSS
 # =========================================================
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">',
             unsafe_allow_html=True)
