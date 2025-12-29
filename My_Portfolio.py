@@ -26,31 +26,53 @@ default_bg_base = "#0F172A"  # كحلي غامق
 
 if 'design_mode' not in st.session_state:
     st.session_state['design_mode'] = "Creative Gradient"
+# ... (بداية الكود كما هي) ...
 
 # =========================================================
-# 3. لوحة الأدمن (Secure Logic Added)
+# 3. لوحة الأدمن (الحل الجذري - Robust Fix)
 # =========================================================
 with st.sidebar:
     st.markdown("### ⚙️ Settings")
     with st.expander("🔒 Admin Access"):
         admin_pass = st.text_input("Enter Admin Password", type="password")
 
-        # --- [التعديل هنا] ---
-        # محاولة جلب الباسورد من ملف secrets.toml
-        # تأكد أن الملف يحتوي على: admin_password = "1862004"
-        try:
-            # نستخدم get لتجنب توقف الكود لو المفتاح مش موجود
-            secret_password = st.secrets.get("admin_password")
-        except FileNotFoundError:
-            secret_password = None  # لو ملف الأسرار مش موجود محلياً
+        # --- الكود السحري للقراءة الآمنة ---
+        import os
 
-        # منطق التحقق:
-        # 1. التأكد أن الباسورد تم جلبه من السيكرتس
-        # 2. التأكد أن المدخل يطابق الباسورد
-        if secret_password is not None and admin_pass == secret_password:
+
+        def get_password_robust():
+            # 1. المحاولة الرسمية (st.secrets)
+            if "admin_password" in st.secrets:
+                return st.secrets["admin_password"]
+
+            # 2. المحاولة اليدوية (Fallback): تقرأ الملف مباشرة مهما كان المسار
+            # هذا يحل مشكلة "Incorrect Password" الناتجة عن عدم العثور على الملف
+            try:
+                current_file_path = os.path.abspath(__file__)  # مسار ملف البايثون الحالي
+                project_folder = os.path.dirname(current_file_path)  # المجلد الحاوي له
+                secrets_path = os.path.join(project_folder, ".streamlit", "secrets.toml")
+
+                if os.path.exists(secrets_path):
+                    with open(secrets_path, "r", encoding="utf-8") as f:
+                        content = f.read()
+                        if 'admin_password' in content:
+                            # استخراج الباسوورد يدوياً
+                            import toml
+                            data = toml.loads(content)
+                            return data.get("admin_password")
+            except Exception as e:
+                pass  # لو فشل كل شيء، نرجع None
+            return None
+
+
+        # استدعاء الدالة
+        real_password = get_password_robust()
+
+        # مقارنة الباسوورد
+        if real_password and admin_pass == real_password:
             st.success("Access Granted! 🔓")
 
-            # --- أدوات التحكم (تظهر فقط بعد الباسورد الصحيح) ---
+            # --- باقي الكود الخاص بالأدمن يوضع هنا كما هو ---
             uploaded_file = st.file_uploader("Upload Photo", type=['jpg', 'png', 'jpeg'])
             if uploaded_file:
                 with open(PROFILE_IMAGE_PATH, "wb") as f:
@@ -58,11 +80,10 @@ with st.sidebar:
                 st.rerun()
 
             st.markdown("---")
-
-            # اختيار الثيم
             design_mode = st.radio("Style Mode", ["Creative Gradient", "Solid Dark"])
-            st.session_state['design_mode'] = design_mode  # حفظ الحالة
+            st.session_state['design_mode'] = design_mode
 
+            # ... (باقي أدوات التحكم بالألوان) ...
             if design_mode == "Creative Gradient":
                 c1, c2 = st.columns(2)
                 with c1:
@@ -77,9 +98,8 @@ with st.sidebar:
             primary_color = st.color_picker("Accent Color", default_primary)
 
         elif admin_pass:
-            # لو الباسورد مكتوب بس غلط
             st.error("Incorrect Password ❌")
-            # تعيين القيم الافتراضية حتى لا يحدث خطأ في باقي الكود
+            # الاحتفاظ بالقيم الافتراضية عند الخطأ
             design_mode = st.session_state.get('design_mode', "Creative Gradient")
             gradient_1 = default_gradient_1
             gradient_2 = default_gradient_2
@@ -87,7 +107,7 @@ with st.sidebar:
             primary_color = default_primary
 
         else:
-            # لو مفيش باسورد مكتوب، استخدم الافتراضي
+            # الوضع الافتراضي للزوار
             design_mode = st.session_state.get('design_mode', "Creative Gradient")
             gradient_1 = default_gradient_1
             gradient_2 = default_gradient_2
