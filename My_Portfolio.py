@@ -1,13 +1,14 @@
 import streamlit as st
 import base64
 import os
+from PIL import Image
 
 # =========================================================
 # 1. إعدادات الصفحة
 # =========================================================
 st.set_page_config(
     page_title="Saif Aboseada | Portfolio",
-    page_icon="🎨",
+    page_icon="👨‍💻",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -17,13 +18,12 @@ st.set_page_config(
 # =========================================================
 PROFILE_IMAGE_PATH = "profile.jpg"
 
-# الألوان الافتراضية (ستايل Outlier / Modern)
-default_primary = "#2DD4BF"  # تيل/سماوي (للتركيز)
+# الألوان (Outlier Style)
+default_primary = "#2DD4BF"  # تيل/سماوي
 default_gradient_1 = "#4C1D95"  # بنفسجي غامق
 default_gradient_2 = "#134E4A"  # تيل غامق
 default_bg_base = "#0F172A"  # كحلي غامق جداً
 
-# متغيرات الجلسة (للحفاظ على اختيارك بعد الريفريش)
 if 'design_mode' not in st.session_state:
     st.session_state['design_mode'] = "Creative Gradient"
 
@@ -32,31 +32,20 @@ if 'design_mode' not in st.session_state:
 # =========================================================
 with st.sidebar:
     st.markdown("### ⚙️ Settings")
-
     with st.expander("🔒 Admin Access"):
         admin_pass = st.text_input("Enter Admin Password", type="password")
-
         if admin_pass == "12345":
             st.success("Unlocked! 🔓")
-            st.markdown("---")
-
-            # 1. رفع الصورة
-            st.markdown("#### 📸 Profile Photo")
             uploaded_file = st.file_uploader("Upload Photo", type=['jpg', 'png', 'jpeg'])
             if uploaded_file:
                 with open(PROFILE_IMAGE_PATH, "wb") as f:
                     f.write(uploaded_file.getbuffer())
-                st.success("Image updated!")
                 st.rerun()
 
             st.markdown("---")
-
-            # 2. الستايل والألوان
-            st.markdown("#### 🎨 Theme Style")
             design_mode = st.radio("Style Mode", ["Creative Gradient", "Solid Dark"], index=0)
 
             if design_mode == "Creative Gradient":
-                st.caption("Gradient Glows")
                 c1, c2 = st.columns(2)
                 with c1:
                     gradient_1 = st.color_picker("Glow 1", default_gradient_1)
@@ -68,9 +57,7 @@ with st.sidebar:
 
             bg_base = st.color_picker("Base BG", default_bg_base)
             primary_color = st.color_picker("Accent Color", default_primary)
-
         else:
-            # قيم الزوار الافتراضية
             design_mode = "Creative Gradient"
             gradient_1 = default_gradient_1
             gradient_2 = default_gradient_2
@@ -78,11 +65,10 @@ with st.sidebar:
             primary_color = default_primary
 
 # =========================================================
-# 4. منطق CSS (Aurora & Glassmorphism & Perfect Image)
+# 4. منطق CSS (Responsive & Perfect Circle)
 # =========================================================
 
 if design_mode == "Creative Gradient":
-    # خلفية متدرجة حديثة
     background_css = f"""
         background-color: {bg_base};
         background-image: 
@@ -90,7 +76,6 @@ if design_mode == "Creative Gradient":
             radial-gradient(at 100% 0%, {gradient_1}80 0px, transparent 50%);
         background-attachment: fixed;
     """
-    # كروت زجاجية
     card_css = f"""
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(16px);
@@ -116,18 +101,20 @@ st.markdown(f"""
         color: #F8FAFC;
     }}
 
-    /* --- Navbar Styling (Glassy) --- */
+    /* --- Navbar Styling --- */
     div[data-testid="stRadio"] > div {{
         display: flex; justify-content: center; gap: 15px;
         background: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(10px);
         padding: 8px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
         margin-top: -20px;
+        flex-wrap: wrap; /* يسمح للأزرار تنزل سطر جديد لو الشاشة ضيقة */
     }}
     div[role="radiogroup"] label > div:first-child {{ display: None; }}
     div[role="radiogroup"] label {{
         padding: 6px 16px; border-radius: 12px; transition: 0.3s; 
         border: 1px solid transparent; color: #94A3B8; font-weight: 500;
+        white-space: nowrap; /* يمنع النص يتقسم */
     }}
     div[role="radiogroup"] label:hover {{ color: var(--primary); background: rgba(255,255,255,0.05); }}
     div[role="radiogroup"] label[data-checked="true"] {{
@@ -135,7 +122,7 @@ st.markdown(f"""
         box-shadow: 0 0 15px {primary_color}60;
     }}
 
-    /* --- Modern Cards --- */
+    /* --- Cards --- */
     .custom-card {{
         {card_css}
         border-radius: 16px; padding: 24px; margin-bottom: 20px; 
@@ -153,57 +140,61 @@ st.markdown(f"""
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         margin-bottom: 0 !important;
     }}
-    h2, h3, h4 {{ color: #F8FAFC !important; }}
-
     .role-text {{
         font-size: 1.5rem; color: var(--primary); font-weight: 600; 
         margin-top: 5px; text-shadow: 0 0 20px {primary_color}40;
     }}
-
     .section-header {{ 
         display: inline-block; border-bottom: 2px solid var(--primary); 
         padding-bottom: 5px; margin-bottom: 30px; margin-top: 10px; 
         color: #F1F5F9; font-size: 1.8rem; font-weight: 700;
     }}
 
-    /* --- IMAGE STYLING (THE PERFECT CIRCLE FIX) --- */
-
-    /* 1. Navbar Logo */
-    .nav-logo {{ 
-        width: 45px; height: 45px; 
-        border-radius: 50%; 
-        border: 2px solid var(--primary); 
-        object-fit: cover; /* يقص الزيادات */
-        object-position: center; 
+    /* --- PERFECT CIRCLE IMAGE FIX --- */
+    .nav-logo, .sidebar-img {{ 
+        border-radius: 50%; border: 2px solid var(--primary); 
+        object-fit: cover; aspect-ratio: 1/1; 
     }}
+    .nav-logo {{ width: 45px; height: 45px; }}
+    .sidebar-img {{ width: 100px; height: 100px; display: block; margin: 0 auto; }}
 
-    /* 2. Main Profile Hero Image */
     .profile-hero-img {{
-        width: 220px;      /* عرض ثابت */
-        height: 220px;     /* نفس الطول بالظبط */
+        width: 220px; 
+        height: 220px; 
         border-radius: 50%; 
         border: 4px solid var(--primary); 
-        object-fit: cover;       /* السحر هنا: بيملى الدائرة بدون مط */
-        object-position: center top; /* يركز على الوش */
+        object-fit: cover;      /* يملأ الدائرة بالكامل */
+        object-position: center top; /* يركز على الوجه */
+        aspect-ratio: 1/1;      /* يضمن إنها دائرة مش بيضاوية */
         display: block; 
         margin: 0 auto;
         box-shadow: 0 0 50px {primary_color}40;
     }}
 
-    /* 3. Sidebar Image */
-    .sidebar-img {{
-        width: 100px; height: 100px; 
-        border-radius: 50%; 
-        border: 2px solid var(--primary); 
-        object-fit: cover; 
-        object-position: center top;
-        display: block; margin: 0 auto;
+    /* --- MOBILE RESPONSIVENESS (MEDIA QUERIES) --- */
+    @media (max-width: 768px) {{
+        /* تعديل القائمة في الموبايل */
+        div[data-testid="stRadio"] > div {{
+            gap: 5px;
+            padding: 5px;
+        }}
+        div[role="radiogroup"] label {{
+            padding: 5px 10px;
+            font-size: 0.85rem;
+        }}
+
+        /* تصغير النصوص والصور في الموبايل */
+        h1 {{ font-size: 2.2rem !important; text-align: center; }}
+        .role-text {{ font-size: 1.2rem; text-align: center; }}
+        p {{ text-align: center; font-size: 1rem; }}
+        .profile-hero-img {{ width: 160px; height: 160px; }}
+
+        /* توسيط الأزرار في الموبايل */
+        .social-buttons {{ display: flex; justify-content: center; margin-top: 20px; }}
     }}
 
-    /* Contact Form */
+    /* Contact Form & Badges */
     div[data-testid="stForm"] {{ {card_css} padding: 25px; border-radius: 16px; }}
-
-    /* Skill Badges */
     .skill-badge {{
         background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); 
         color: #E2E8F0; padding: 6px 14px; border-radius: 30px; 
@@ -258,6 +249,7 @@ with st.sidebar:
 # =========================================================
 
 if selected_page == "Profile":
+    # في الموبايل، الـ Columns بتيجي تحت بعض، فده هيظبط الترتيب أوتوماتيك
     col1, col2 = st.columns([1, 2], gap="large")
     with col1:
         st.markdown(f'<img src="{img_src}" class="profile-hero-img">', unsafe_allow_html=True)
@@ -270,7 +262,7 @@ if selected_page == "Profile":
                     Building scalable, secure, and high-performance APIs. 
                     Specialized in <b>ASP.NET Core</b> architecture and database optimization.
                 </p>
-                <div style="margin-top: 30px;">
+                <div class="social-buttons" style="margin-top: 30px;">
                     <a href="https://linkedin.com/in/saif-yehia" target="_blank" style="background:{primary_color}; color:#0F172A; padding:12px 25px; border-radius:30px; font-weight:bold; margin-right:15px; text-decoration:none; box-shadow: 0 4px 15px {primary_color}40;">
                         <i class="fa-brands fa-linkedin"></i> LinkedIn
                     </a>
@@ -299,7 +291,7 @@ elif selected_page == "Experience":
         task_html = "".join([f"<li style='margin-bottom:8px;'>{t}</li>" for t in tasks])
         return f"""
         <div class="custom-card">
-            <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 15px;">
+            <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <div>
                     <div style="color:#F8FAFC; font-weight:700; font-size:1.2em;">{role}</div>
                     <div style="color:{primary_color}; font-weight:600;">{company}</div>
