@@ -1,6 +1,7 @@
 import streamlit as st
 import base64
 import os
+import requests  # ضروري لإرسال الإيميلات
 
 # =========================================================
 # 1. إعدادات الصفحة
@@ -27,13 +28,18 @@ if 'design_mode' not in st.session_state:
     st.session_state['design_mode'] = "Creative Gradient"
 
 # =========================================================
-# 3. لوحة الأدمن
+# 3. لوحة الأدمن (مؤمنة بـ Secrets)
 # =========================================================
 with st.sidebar:
     st.markdown("### ⚙️ Settings")
     with st.expander("🔒 Admin Access"):
         admin_pass = st.text_input("Enter Admin Password", type="password")
-        if admin_pass == "12345":
+
+        # --- تعديل الأمان: قراءة الباسورد من Secrets ---
+        # إذا لم يكن هناك secrets ملف، سيستخدم "12345" كاحتياطي للاختبار
+        secret_password = st.secrets.get("admin_password", "12345")
+
+        if admin_pass == secret_password:
             st.success("Unlocked! 🔓")
             uploaded_file = st.file_uploader("Upload Photo", type=['jpg', 'png', 'jpeg'])
             if uploaded_file:
@@ -56,7 +62,12 @@ with st.sidebar:
 
             bg_base = st.color_picker("Base BG", default_bg_base)
             primary_color = st.color_picker("Accent Color", default_primary)
-        else:
+
+        elif admin_pass != "":
+            st.error("Wrong Password ❌")
+
+        # استخدام القيم الافتراضية في حالة عدم الدخول كأدمن
+        if admin_pass != secret_password:
             design_mode = "Creative Gradient"
             gradient_1 = default_gradient_1
             gradient_2 = default_gradient_2
@@ -64,7 +75,7 @@ with st.sidebar:
             primary_color = default_primary
 
 # =========================================================
-# 4. تنسيق CSS (الحل النهائي للصورة)
+# 4. تنسيق CSS (إصلاحات الموبايل والصورة الدائرية)
 # =========================================================
 
 if design_mode == "Creative Gradient":
@@ -110,6 +121,7 @@ st.markdown(f"""
     div[role="radiogroup"] label {{
         background: transparent; padding: 8px 16px; border-radius: 12px; transition: 0.3s; 
         border: 1px solid transparent; color: #94A3B8; font-weight: 500; margin: 0 !important;
+        cursor: pointer;
     }}
     div[role="radiogroup"] label > div:first-child {{ display: None; }}
     div[role="radiogroup"] label:hover {{ color: var(--primary); background: rgba(255,255,255,0.05); }}
@@ -118,13 +130,28 @@ st.markdown(f"""
         box-shadow: 0 0 15px {primary_color}60;
     }}
 
-    /* Mobile Media Query */
+    /* --- MOBILE MEDIA QUERY (إصلاحات الموبايل) --- */
     @media (max-width: 600px) {{
         div[data-testid="stRadio"] > div {{
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; padding: 10px;
         }}
-        div[role="radiogroup"] label {{ width: 100%; padding: 6px 4px; font-size: 0.8rem; text-align: center; }}
-        h1 {{ font-size: 2.5rem !important; }}
+        div[role="radiogroup"] label {{ 
+            width: 100%; padding: 8px 4px; font-size: 0.85rem; text-align: center; 
+            color: #E2E8F0 !important; background-color: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+        }}
+        .nav-logo {{ margin: 0 auto 10px auto !important; display: block !important; }}
+        h1 {{ font-size: 2.5rem !important; text-align: center; }}
+        p {{ text-align: center; }}
+        .social-buttons {{ justify-content: center; }}
+    }}
+
+    /* Inputs Styling */
+    .stTextInput input, .stTextArea textarea {{
+        background-color: rgba(0, 0, 0, 0.3) !important; color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 10px !important;
+    }}
+    .stTextInput input:focus, .stTextArea textarea:focus {{
+        border-color: var(--primary) !important; box-shadow: 0 0 10px {primary_color}40 !important;
     }}
 
     /* Cards & Typography */
@@ -150,36 +177,28 @@ st.markdown(f"""
        THE PERFECT CIRCLE FIX (الحل النهائي للصورة)
        ======================================================== */
     .nav-logo {{ 
-        width: 45px !important; 
-        height: 45px !important; 
-        border-radius: 50% !important; 
-        border: 2px solid var(--primary); 
-        object-fit: cover !important; 
-        object-position: center top !important;
+        width: 45px !important; height: 45px !important; 
+        border-radius: 50% !important; border: 2px solid var(--primary); 
+        object-fit: cover !important; object-position: center top !important;
     }}
 
     .sidebar-img {{ 
-        width: 100px !important; 
-        height: 100px !important; 
-        border-radius: 50% !important; 
-        border: 2px solid var(--primary); 
-        object-fit: cover !important; 
-        object-position: center top !important;
+        width: 100px !important; height: 100px !important; 
+        border-radius: 50% !important; border: 2px solid var(--primary); 
+        object-fit: cover !important; object-position: center top !important;
         display: block; margin: 0 auto; 
     }}
 
     .profile-hero-img {{
-        width: 220px !important;        /* عرض ثابت */
-        height: 220px !important;       /* نفس الطول بالظبط */
-        border-radius: 50% !important;  /* دائرة كاملة */
+        width: 220px !important;        
+        height: 220px !important;       
+        border-radius: 50% !important;  
         border: 4px solid var(--primary); 
-        object-fit: cover !important;   /* يقص الزيادات ويملا الفراغات */
-        object-position: center top !important; /* يركز على الوش */
-        display: block; 
-        margin: 0 auto;
+        object-fit: cover !important;   
+        object-position: center top !important; 
+        display: block; margin: 0 auto;
         box-shadow: 0 0 50px {primary_color}40;
     }}
-    /* ======================================================== */
 
     .skill-badge {{
         background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); 
@@ -228,7 +247,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 # =========================================================
-# 6. المحتوى الكامل (Full Data)
+# 6. المحتوى الكامل
 # =========================================================
 
 if selected_page == "Profile":
@@ -243,7 +262,7 @@ if selected_page == "Profile":
                 <p style="color: #94A3B8; font-size: 1.1em; margin-top: 15px; line-height: 1.6;">
                     Port Said, Egypt | +20 127-851-3846
                 </p>
-                <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
+                <div class="social-buttons" style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
                     <a href="https://linkedin.com/in/saif-yehia" target="_blank" style="background:{primary_color}; color:#0F172A; padding:10px 20px; border-radius:30px; font-weight:bold; text-decoration:none;">LinkedIn</a>
                     <a href="https://github.com/Saif-Yehia-Mosaad" target="_blank" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#F1F5F9; padding:10px 20px; border-radius:30px; font-weight:bold; text-decoration:none;">GitHub</a>
                 </div>
@@ -404,13 +423,28 @@ elif selected_page == "Contact":
     c1, c2 = st.columns([1.5, 1])
     with c1:
         with st.form("contact_form"):
-            st.text_input("Your Name")
-            st.text_input("Your Email")
-            st.text_area("Message")
+            name = st.text_input("Your Name")
+            email = st.text_input("Your Email")
+            message = st.text_area("Message")
 
-            # هنا التعديل: استخدام Toast بدل Success
-            if st.form_submit_button("Send Message"):
-                st.toast("Message Sent Successfully! 🚀", icon="🎉")
+            submit = st.form_submit_button("Send Message")
+
+            if submit:
+                if name and email and message:
+                    # --- تعديل الإيميل الفعلي (Formspree) ---
+                    # ⚠️ هام جداً: استبدل اللينك ده باللينك الخاص بك من موقع formspree.io
+                    form_url = "https://formspree.io/f/YOUR_FORM_ID"
+
+                    try:
+                        response = requests.post(form_url, json={"name": name, "email": email, "message": message})
+                        if response.status_code == 200:
+                            st.toast("Message Sent Successfully! 🚀", icon="🎉")
+                        else:
+                            st.error("Something went wrong. Please check your internet or Formspree settings.")
+                    except:
+                        st.error("Failed to connect to the server.")
+                else:
+                    st.warning("Please fill in all fields.")
 
     with c2:
         st.markdown(f"""
