@@ -6,20 +6,20 @@ import os
 # 1. إعدادات الصفحة
 # =========================================================
 st.set_page_config(
-    page_title="Saif Aboseada | Portfolio",
-    page_icon="💼",
+    page_title="Saif Aboseada | Backend Developer",
+    page_icon="code",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # =========================================================
-# 2. نظام الأدمن (ADMIN SYSTEM)
+# 2. نظام الأدمن (للتعديل فقط)
 # =========================================================
-# المتغيرات الافتراضية (لو مفيش أدمن فاتح)
-default_primary = "#D29922"
-default_bg = "#0E1117"
-default_card = "#161B22"
-default_text = "#E6EDF3"
+# القيم الافتراضية للتصميم (Dark & Gold Theme)
+default_primary = "#D4AF37"  # ذهبي
+default_bg = "#0E1117"  # أسود داكن
+default_card = "#161B22"  # رمادي غامق جداً للكروت
+default_text = "#E6EDF3"  # أبيض مائل للرمادي
 default_font = 16
 uploaded_img = None
 
@@ -27,54 +27,43 @@ with st.sidebar:
     st.header("Navigation")
     menu = st.radio(
         "Go to",
-        ["Home", "Experience", "Projects", "Services", "Contact"],
+        ["Profile", "Experience", "Projects", "Skills", "Education"],
         label_visibility="collapsed"
     )
 
     st.markdown("---")
 
-    # --- منطقة الأدمن (محمية بكلمة سر) ---
-    with st.expander("🔒 Admin Access"):
-        # ⚠️ هنا كلمة السر (غيرها براحتك)
+    # منطقة الأدمن (محمية بكلمة سر)
+    with st.expander("🔒 Admin Settings"):
         admin_pass = st.text_input("Password", type="password")
+        if admin_pass == "12345":
+            st.success("Edit Mode: ON")
 
-        if admin_pass == "12345":  # <--- غير الرقم ده لكلمة سر خاصة بيك
-            st.success("Unlocked! You can edit now.")
-
-            st.markdown("### 🎨 Edit Design")
-
+            st.markdown("### Design Control")
             # رفع الصورة
-            st.caption("Profile Photo")
-            uploaded_img = st.file_uploader("Change Photo", type=['jpg', 'png', 'jpeg'])
-            img_width = st.slider("Size", 120, 300, 200)
-            img_shape = st.radio("Shape", ["Circle", "Square"], index=0)
+            uploaded_img = st.file_uploader("Upload Photo", type=['jpg', 'png', 'jpeg'])
+            img_width = st.slider("Photo Size", 120, 300, 180)
+            img_shape = st.radio("Photo Shape", ["Circle", "Square"], index=0)
 
             # الألوان
-            st.caption("Colors")
-            primary_color = st.color_picker("Accent (Gold)", default_primary)
+            primary_color = st.color_picker("Accent Color", default_primary)
             bg_color = st.color_picker("Background", default_bg)
             card_bg_color = st.color_picker("Card BG", default_card)
             text_color = st.color_picker("Text Color", default_text)
-            base_font_size = st.slider("Font Size", 14, 20, default_font)
 
-            # المتغيرات هتتحدث بناء على اختيارك
-            border_radius = "50%" if img_shape == "Circle" else "15px"
-
+            border_radius = "50%" if img_shape == "Circle" else "12px"
         else:
-            # لو الزائر عادي أو الباسورد غلط، نستخدم القيم الافتراضية
-            img_width = 200
+            # القيم الثابتة للزوار
+            img_width = 180
             border_radius = "50%"
             primary_color = default_primary
             bg_color = default_bg
             card_bg_color = default_card
             text_color = default_text
-            base_font_size = default_font
-            if admin_pass != "":
-                st.error("Wrong Password")
 
 
 # =========================================================
-# 3. معالجة الملفات (صور و PDF)
+# 3. معالجة الصور والملفات
 # =========================================================
 def get_image_src(uploaded, local_path):
     if uploaded is not None:
@@ -87,15 +76,22 @@ def get_image_src(uploaded, local_path):
         encoded = base64.b64encode(data).decode()
         return f"data:image/jpg;base64,{encoded}"
     else:
-        return "https://via.placeholder.com/200"
+        # Placeholder احترافي لو مفيش صورة
+        return "https://ui-avatars.com/api/?name=Saif+Aboseada&background=D4AF37&color=000"
 
 
-# صورة البروفايل
 default_img_path = "profile.jpg"
 img_src = get_image_src(uploaded_img, default_img_path)
 
+# ملف الـ CV
+resume_path = "Saif_Eldien_Backend_CV.pdf"  # تأكد من تغيير الاسم لو مختلف
+resume_data = None
+if os.path.exists(resume_path):
+    with open(resume_path, "rb") as f:
+        resume_data = f.read()
+
 # =========================================================
-# 4. التنسيق (CSS)
+# 4. التنسيق المتقدم (Advanced CSS)
 # =========================================================
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">',
             unsafe_allow_html=True)
@@ -110,244 +106,314 @@ st.markdown(f"""
         --bg-card: {card_bg_color};
         --text-main: {text_color};
         --text-sec: #8B949E;
-        --font-size: {base_font_size}px;
     }}
 
-    .stApp {{ background-color: var(--bg-main); font-family: 'Inter', sans-serif; font-size: var(--font-size); }}
-    a {{ text-decoration: none; color: inherit; transition: 0.3s; }}
-    a:hover {{ color: var(--primary) !important; }}
+    .stApp {{ background-color: var(--bg-main); font-family: 'Inter', sans-serif; }}
 
-    /* صورة البروفايل */
+    /* تنسيق الصورة الشخصية */
     .profile-img {{
         width: {img_width}px; height: {img_width}px; border-radius: {border_radius};
-        border: 4px solid var(--primary); object-fit: cover;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: block; margin: 0 auto 20px auto;
+        border: 3px solid var(--primary); object-fit: cover;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); display: block; margin: 0 auto 20px auto;
     }}
 
-    /* الكروت */
+    /* === توحيد أطوال الكروت (Equal Height) === */
+    [data-testid="column"] {{
+        display: flex;
+        flex-direction: column;
+    }}
+
     .custom-card {{
-        background-color: var(--bg-card); border: 1px solid #30363D;
-        border-radius: 12px; padding: 25px; margin-bottom: 20px;
+        background-color: var(--bg-card); 
+        border: 1px solid #30363D;
+        border-radius: 8px; 
+        padding: 24px; 
+        margin-bottom: 20px;
+        flex: 1; /* يجعل الكارت يتمدد ليملأ الطول */
         transition: transform 0.2s, border-color 0.2s;
+        display: flex;
+        flex-direction: column;
     }}
     .custom-card:hover {{ border-color: var(--primary); transform: translateY(-3px); }}
 
-    /* Skill Chips */
-    .skill-container {{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }}
-    .skill-chip {{
-        background-color: rgba(255, 255, 255, 0.05); border: 1px solid #30363D;
-        border-left: 3px solid var(--primary); color: var(--text-main);
-        padding: 8px 16px; border-radius: 6px; font-weight: 500; font-size: 0.9em;
-    }}
+    /* النصوص داخل الكروت */
+    .card-title {{ color: var(--text-main); font-weight: 700; font-size: 1.1em; margin-bottom: 5px; }}
+    .card-subtitle {{ color: var(--primary); font-size: 0.9em; font-weight: 600; margin-bottom: 10px; }}
+    .card-text {{ color: var(--text-sec); font-size: 0.95em; line-height: 1.6; flex-grow: 1; }}
 
-    /* Sidebar Image */
-    .sidebar-img {{
-        width: 100px; height: 100px; border-radius: {border_radius}; 
-        border: 2px solid {primary_color}; object-fit: cover; display: block; margin: 0 auto;
+    /* تنسيق المهارات (بدون إيموجي) */
+    .skill-badge {{
+        background-color: transparent;
+        border: 1px solid #30363D;
+        color: var(--text-main);
+        padding: 6px 14px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        font-weight: 500;
+        display: inline-block;
+        margin: 4px;
+        transition: all 0.2s;
     }}
+    .skill-badge:hover {{ border-color: var(--primary); color: var(--primary); }}
 
     /* العناوين والأيقونات */
-    .icon-link {{ display: flex; align-items: center; gap: 10px; color: var(--text-sec); margin-bottom: 10px; font-size: 1.1em; }}
-    .icon-link i {{ color: var(--primary); width: 25px; text-align: center; }}
-    h1, h2, h3 {{ color: var(--text-main) !important; }}
-    p, li {{ color: var(--text-sec); }}
+    h1, h2, h3 {{ color: var(--text-main) !important; letter-spacing: -0.5px; }}
+    .section-header {{ border-bottom: 2px solid #30363D; padding-bottom: 10px; margin-bottom: 25px; margin-top: 10px; }}
+    .icon-box {{ color: var(--primary); margin-right: 10px; width: 20px; text-align: center; }}
+
+    /* الروابط */
+    a {{ text-decoration: none; color: inherit; transition: 0.3s; }}
+    a:hover {{ color: var(--primary) !important; }}
 
     /* زرار التحميل */
     .stDownloadButton button {{
+        width: 100%;
         background-color: transparent !important;
-        border: 2px solid var(--primary) !important;
+        border: 1px solid var(--primary) !important;
         color: var(--primary) !important;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-weight: bold;
+        border-radius: 6px;
     }}
-    .stDownloadButton button:hover {{
-        background-color: var(--primary) !important;
-        color: var(--bg-main) !important;
-    }}
+    .stDownloadButton button:hover {{ background-color: rgba(212, 175, 55, 0.1) !important; }}
     </style>
 """, unsafe_allow_html=True)
 
-# صورة في السايد بار
+# صورة السايد بار
 with st.sidebar:
     st.markdown(f"""
         <div style="text-align: center; margin-bottom: 20px;">
-            <img src="{img_src}" class="sidebar-img">
-            <h3 style="margin-top: 10px; font-size: 1.2em;">Saif Aboseada</h3>
+            <img src="{img_src}" style="width: 80px; height: 80px; border-radius: {border_radius}; border: 2px solid {primary_color}; object-fit: cover;">
+            <h3 style="margin-top: 10px; font-size: 1.1em; color: {text_color};">Saif Aboseada</h3>
         </div>
     """, unsafe_allow_html=True)
 
-# =========================================================
-# 5. منطق تحميل الـ Resume
-# =========================================================
-resume_file_path = "resume.pdf"  # اسم الملف اللي هتحطه جنبه الكود
-resume_data = None
-
-if os.path.exists(resume_file_path):
-    with open(resume_file_path, "rb") as f:
-        resume_data = f.read()
-else:
-    # لو الملف مش موجود منعرضش زرار التحميل
-    resume_data = None
+    if resume_data:
+        st.download_button(
+            label="Download Resume (PDF)",
+            data=resume_data,
+            file_name="Saif_Aboseada_Backend_CV.pdf",
+            mime="application/pdf"
+        )
 
 # =========================================================
-# 6. المحتوى الرئيسي
+# 5. المحتوى الرئيسي (Main Content)
 # =========================================================
 
-if menu == "Home":
+# --- Header / Profile ---
+if menu == "Profile":
     col1, col2 = st.columns([1, 2])
-
     with col1:
         st.markdown(f'<img class="profile-img" src="{img_src}">', unsafe_allow_html=True)
-
+        # معلومات الاتصال
         st.markdown(f"""
-            <div class="custom-card">
-                <a href="#" class="icon-link"><i class="fa-solid fa-location-dot"></i> Port Said, Egypt</a>
-                <a href="mailto:saif@example.com" class="icon-link"><i class="fa-solid fa-envelope"></i> saif@example.com</a>
-                <a href="https://linkedin.com/in/YOUR_LINKEDIN" target="_blank" class="icon-link"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
-                <a href="https://github.com/YOUR_GITHUB" target="_blank" class="icon-link"><i class="fa-brands fa-github"></i> GitHub</a>
+            <div class="custom-card" style="text-align: center; padding: 15px;">
+                <div style="margin-bottom: 8px;"><i class="fa-solid fa-location-dot icon-box"></i> Port Said, Egypt</div>
+                <div style="margin-bottom: 8px;"><i class="fa-solid fa-phone icon-box"></i> +20 127-851-3846</div>
+                <div style="margin-bottom: 8px;"><a href="mailto:saifyehia58@gmail.com"><i class="fa-solid fa-envelope icon-box"></i> saifyehia58@gmail.com</a></div>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 10px;">
+                    <a href="https://www.linkedin.com/in/saif-yehia/" target="_blank"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+                    <a href="https://github.com/Saif-Yehia-Mosaad" target="_blank"><i class="fa-brands fa-github fa-lg"></i></a>
+                </div>
             </div>
         """, unsafe_allow_html=True)
 
     with col2:
         st.markdown(f"""
-            <h1 style="font-size: 3em; margin-bottom: 0;">Saif Aboseada</h1>
-            <h3 style="color: {primary_color} !important; margin-top: 0;">Senior .NET Backend Developer</h3>
-            <p style="font-size: 1.2em; margin-top: 20px; max-width: 650px;">
-                Computer Science graduate specializing in building robust, scalable <b>RESTful APIs</b> 
-                and high-performance backend systems using <b>ASP.NET Core</b>.
-            </p>
+            <h1 style="font-size: 2.8em; margin-bottom: 5px;">SAIF ABOSEADA</h1>
+            <h3 style="color: {primary_color} !important; font-weight: 400; margin-top: 0;">.NET Backend Developer</h3>
+            <div style="margin-top: 20px; color: {text_color}; line-height: 1.7;">
+                Passionate .NET Backend Developer and Computer Science student with specialized expertise in building 
+                scalable Web APIs using <b>ASP.NET Core</b> and <b>SQL Server</b>. Proficient in implementing 
+                <b>Clean Architecture</b>, <b>Repository Pattern</b>, and securing RESTful services. 
+                Seeking a challenging backend position to apply advanced C# skills in developing high-performance enterprise solutions.
+            </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("---")
 
-        # --- قسم المهارات (Tech Stack) ---
-        st.subheader("🛠️ Technical Stack")
-
-
-        def tech_badge_group(title, skills):
-            badges_html = "".join([f'<div class="skill-chip">{s}</div>' for s in skills])
-            st.markdown(
-                f"""<div style="margin-bottom: 15px;"><strong style="color: {primary_color};">{title}</strong><div class="skill-container">{badges_html}</div></div>""",
-                unsafe_allow_html=True)
-
-
-        tech_badge_group("Backend Core", ["C#", ".NET 8", "ASP.NET Core Web API", "MVC", "SignalR", "LINQ"])
-        tech_badge_group("Data & Storage", ["SQL Server", "Entity Framework Core", "Redis", "PostgreSQL"])
-        tech_badge_group("Architecture", ["Microservices", "Docker", "Clean Architecture", "CI/CD"])
-
-        st.markdown("---")
-
-        # --- أزرار التحميل والتواصل ---
-        c1, c2 = st.columns([1, 4])
-        with c1:
-            if resume_data:
-                st.download_button(
-                    label="📄 Download CV",
-                    data=resume_data,
-                    file_name="Saif_Aboseada_Resume.pdf",
-                    mime="application/pdf"
-                )
-            else:
-                st.warning("Resume file not found.")
-
-        with c2:
-            st.link_button("✉️ Hire Me", "mailto:saif@example.com")
-
-
+# --- Experience ---
 elif menu == "Experience":
-    st.markdown("<h2><i class='fa-solid fa-briefcase'></i> Professional History</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='section-header'>Professional Experience</h2>", unsafe_allow_html=True)
 
 
-    def job_card(role, company, date, tasks):
-        task_items = "".join([f"<li style='margin-bottom:6px;'>{t}</li>" for t in tasks])
+    # دالة لعرض الخبرة
+    def job_entry(role, company, date, tasks):
+        task_list = "".join([f"<li style='margin-bottom:6px;'>{t}</li>" for t in tasks])
         return f"""
         <div class="custom-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <h3 style="color:{primary_color} !important; margin:0;">{role}</h3>
-                <span style="background:rgba(255,255,255,0.1); padding:4px 10px; border-radius:15px; font-size:0.85em;">{date}</span>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 10px;">
+                <div>
+                    <div class="card-title">{role}</div>
+                    <div class="card-subtitle"><i class="fa-solid fa-building icon-box" style="margin-left:0; width:auto;"></i> {company}</div>
+                </div>
+                <div style="font-size: 0.85em; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 4px; white-space: nowrap;">{date}</div>
             </div>
-            <div style="font-weight:bold; margin-bottom:15px; opacity:0.9;"><i class="fa-solid fa-building"></i> {company}</div>
-            <ul style="padding-left:20px; opacity:0.85;">{task_items}</ul>
+            <ul style="padding-left: 20px; color: {default_text}; opacity: 0.9;">{task_list}</ul>
         </div>
         """
 
 
-    st.markdown(job_card(
-        "Full-Stack .NET Trainer", "Digital Pioneers Initiative (DPI)", "Nov 2023 - Present",
-        ["Mentored 50+ students in C# and .NET backend concepts.", "Designed curriculum for API development.",
-         "Conducted code reviews."]
+    # البيانات من الـ CV بدقة (مع تعديل التاريخ لـ 2025)
+    st.markdown(job_entry(
+        "Full Stack .NET Development Trainee",
+        "Digital Egypt Pioneers Initiative (DEPI)",
+        "Nov 2025 - Present",
+        [
+            "Specialized in Backend Development using ASP.NET Core and SQL Server.",
+            "Collaborated with a team to design database schemas and implement business logic for enterprise-level applications.",
+            "Mastered version control workflows using Git and GitHub in an Agile environment."
+        ]
     ), unsafe_allow_html=True)
 
-    st.markdown(job_card(
-        "Freelance Backend Developer", "Remote / Upwork", "Jan 2023 - Present",
-        ["Built scalable E-commerce APIs.", "Optimized legacy SQL queries.",
-         "Integrated Payment Gateways (Stripe, PayPal)."]
-    ), unsafe_allow_html=True)
 
-
+# --- Projects ---
 elif menu == "Projects":
-    st.markdown("<h2><i class='fa-solid fa-code'></i> Featured Projects</h2>", unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
+    st.markdown("<h2 class='section-header'>Technical Projects</h2>", unsafe_allow_html=True)
 
 
-    def project_card(title, desc, stack, link):
-        tags = "".join([
-                           f"<span style='background:rgba(210, 153, 34, 0.15); color:{primary_color}; padding:3px 10px; border-radius:4px; font-size:0.8em; margin-right:5px; display:inline-block; margin-top:5px;'>{t}</span>"
-                           for t in stack])
+    # دالة المشاريع
+    def project_card(title, tech_type, desc_list, stack_tags):
+        items = "".join([f"<li>{item}</li>" for item in desc_list])
+        tags = "".join([f"<span class='skill-badge' style='font-size: 0.75em;'>{t}</span>" for t in stack_tags])
+
         return f"""
-        <div class="custom-card" style="height:100%">
-            <div style="display:flex; justify-content:space-between;">
-                <h3 style="margin:0;">{title}</h3>
-                <a href="{link}" target="_blank" style="color:{primary_color};"><i class="fa-brands fa-github"></i></a>
+        <div class="custom-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="card-title">{title}</div>
+                <span style="font-size:0.7em; border:1px solid {primary_color}; color:{primary_color}; padding:2px 6px; border-radius:4px;">{tech_type}</span>
             </div>
-            <p style="margin-top:10px; font-size:0.95em;">{desc}</p>
-            <div style="margin-top:15px;">{tags}</div>
+            <div class="card-text">
+                <ul style="padding-left: 15px; margin-top: 10px;">{items}</ul>
+            </div>
+            <div style="margin-top: 15px; border-top: 1px solid #30363D; padding-top: 10px;">
+                {tags}
+            </div>
         </div>
         """
 
 
+    # الصف الأول
+    c1, c2 = st.columns(2)
     with c1:
-        st.markdown(
-            project_card("E-Commerce API", "Full featured API with Basket, Ordering.", [".NET 8", "Redis", "Docker"],
-                         "#"), unsafe_allow_html=True)
-        st.markdown(
-            project_card("Smart Recruitment", "AI-based CV filtering system.", ["Python", "Streamlit", "SQL"], "#"),
-            unsafe_allow_html=True)
+        st.markdown(project_card(
+            "E-Commerce RESTful API",
+            "Backend",
+            [
+                "Developed a comprehensive API using ASP.NET Core and SQL Server.",
+                "Implemented Repository Pattern and Unit of Work.",
+                "Designed complex schemas: products, categories, orders, payments."
+            ],
+            ["ASP.NET Core", "SQL Server", "Repository Pattern"]
+        ), unsafe_allow_html=True)
 
     with c2:
-        st.markdown(project_card("Medical Booking", "Clinic management with concurrency control.",
-                                 ["MVC", "SignalR", "Hangfire"], "#"), unsafe_allow_html=True)
-        st.markdown(
-            project_card("Auth Microservice", "Centralized Identity Server.", ["IdentityServer", "RabbitMQ"], "#"),
-            unsafe_allow_html=True)
+        st.markdown(project_card(
+            "Medical Clinic Booking System",
+            "Backend",
+            [
+                "Engineered booking system allowing patients to schedule appointments.",
+                "Handled concurrency & validation to prevent double-booking.",
+                "Secured API using JWT Auth & Role-Based Access Control (RBAC)."
+            ],
+            ["Web API", "JWT", "Concurrency Control"]
+        ), unsafe_allow_html=True)
+
+    # الصف الثاني
+    c3, c4 = st.columns(2)
+    with c3:
+        st.markdown(project_card(
+            "Daily Quotes Application",
+            "Full Stack",
+            [
+                "Developed RESTful API serving dynamic content to mobile apps.",
+                "Designed robust endpoints for CRUD operations.",
+                "Integrated with a Flutter mobile application."
+            ],
+            ["ASP.NET Core", "REST API", "Mobile Integration"]
+        ), unsafe_allow_html=True)
+
+    with c4:
+        st.markdown(project_card(
+            "Auth & Authorization Service",
+            "Microservice",
+            [
+                "Built dedicated identity service using ASP.NET Core Identity & JWT.",
+                "Implemented custom middleware for error handling and logging."
+            ],
+            ["Identity", "Middleware", "Security"]
+        ), unsafe_allow_html=True)
+
+    # الصف الثالث
+    c5, c6 = st.columns(2)
+    with c5:
+        st.markdown(project_card(
+            "Student Management System",
+            "MVC",
+            [
+                "Built classic management application using ASP.NET Core MVC.",
+                "Managed complex Relational Database concepts (One-to-Many, Many-to-Many)."
+            ],
+            ["MVC", "Relational DB", "EF Core"]
+        ), unsafe_allow_html=True)
+    with c6:
+        # كارت فارغ للحفاظ على التنسيق أو ممكن إضافة مشروع مستقبلي
+        pass
 
 
-elif menu == "Services":
-    st.markdown("<h2><i class='fa-solid fa-layer-group'></i> Services</h2>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns(3)
+# --- Skills ---
+elif menu == "Skills":
+    st.markdown("<h2 class='section-header'>Technical Skills</h2>", unsafe_allow_html=True)
 
 
-    def service_box(icon, title, desc):
-        return f"""<div class="custom-card" style="text-align:center; height:100%;"><i class="{icon}" style="font-size:2.5em; margin-bottom:15px; color:{primary_color};"></i><h3 style="font-size:1.3em;">{title}</h3><p style="font-size:0.9em;">{desc}</p></div>"""
+    def skill_section(title, icon, skills_list):
+        badges = "".join([f"<span class='skill-badge'>{s}</span>" for s in skills_list])
+        st.markdown(f"""
+            <div style="margin-bottom: 25px;">
+                <h4 style="color: {text_color}; margin-bottom: 10px;"><i class="{icon} icon-box"></i> {title}</h4>
+                <div>{badges}</div>
+            </div>
+        """, unsafe_allow_html=True)
 
 
-    with col1:
-        st.markdown(service_box("fa-solid fa-server", "API Development", "Secure RESTful APIs."),
-                    unsafe_allow_html=True)
-    with col2:
-        st.markdown(service_box("fa-solid fa-database", "Database Design", "Schema design & Tuning."),
-                    unsafe_allow_html=True)
-    with col3:
-        st.markdown(service_box("fa-brands fa-docker", "Cloud & DevOps", "Deployment & Docker."),
-                    unsafe_allow_html=True)
+    skill_section("Core Technologies", "fa-solid fa-code",
+                  ["C#", ".NET 6/7/8", "ASP.NET Core Web API", "LINQ", "Entity Framework Core"])
+
+    skill_section("Database Management", "fa-solid fa-database",
+                  ["SQL Server", "T-SQL", "Database Design", "Normalization"])
+
+    skill_section("Architecture & Patterns", "fa-solid fa-sitemap",
+                  ["MVC", "RESTful APIs", "Repository Pattern", "Unit of Work", "Dependency Injection"])
+
+    skill_section("Tools & DevOps", "fa-solid fa-wrench",
+                  ["Git", "GitHub", "Postman", "Swagger UI", "Docker (Basics)"])
+
+    skill_section("Testing", "fa-solid fa-vial",
+                  ["xUnit", "NUnit", "Unit Testing Fundamentals"])
 
 
-elif menu == "Contact":
-    st.markdown("<h2><i class='fa-solid fa-paper-plane'></i> Get In Touch</h2>", unsafe_allow_html=True)
-    with st.form("contact_form"):
-        c1, c2 = st.columns(2)
-        with c1: st.text_input("Name")
-        with c2: st.text_input("Email")
-        st.text_area("Message")
-        st.form_submit_button("Send Message")
+# --- Education & Certifications ---
+elif menu == "Education":
+    c1, c2 = st.columns(2)
+
+    with c1:
+        st.markdown("<h3 class='section-header'>Education</h3>", unsafe_allow_html=True)
+        st.markdown(f"""
+            <div class="custom-card">
+                <div class="card-title">Bachelor of Computer Science</div>
+                <div class="card-subtitle">Suez Canal University</div>
+                <div style="font-size: 0.9em; margin-bottom: 10px; color: {primary_color};">Oct 2022 - Present</div>
+                <div class="card-text">
+                    Focus on OOP, Data Structures, Algorithms, and Distributed Systems.
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with c2:
+        st.markdown("<h3 class='section-header'>Certifications</h3>", unsafe_allow_html=True)
+        st.markdown(f"""
+            <div class="custom-card">
+                <ul style="padding-left: 20px; color: {default_text}; line-height: 1.8;">
+                    <li><b>.NET Web Development:</b> 120-hour intensive course (Adv C#, SQL, ASP.NET Core).</li>
+                    <li><b>Frontend Web Development:</b> 162-hour course (HTML, CSS, JS, Sass).</li>
+                    <li><b>AI for Beginners:</b> Issued by HP LIFE.</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
