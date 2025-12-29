@@ -1,7 +1,7 @@
 import streamlit as st
 import base64
 import os
-import requests
+import requests  # ضروري لإرسال الإيميلات
 
 # =========================================================
 # 1. إعدادات الصفحة
@@ -28,18 +28,19 @@ if 'design_mode' not in st.session_state:
     st.session_state['design_mode'] = "Creative Gradient"
 
 # =========================================================
-# 3. لوحة الأدمن (Secure Version)
+# 3. لوحة الأدمن (Secure Version - No Hardcoded Passwords)
 # =========================================================
 with st.sidebar:
     st.markdown("### ⚙️ Settings")
     with st.expander("🔒 Admin Access"):
         admin_pass = st.text_input("Enter Admin Password", type="password")
 
-        # --- التعديل النهائي: قراءة الباسورد حصرياً من Secrets ---
-        # لن يتم وضع أي باسورد احتياطي هنا
+        # --- التعديل الأمني النهائي ---
+        # محاولة قراءة الباسورد من ملف الأسرار فقط
+        # لو مفيش ملف أسرار، القيمة هتكون None
         secret_password = st.secrets.get("admin_password")
 
-        # التحقق من الباسورد
+        # التحقق: لازم يكون فيه باسورد في السيكرتس + الباسورد المدخل يطابقه
         if secret_password is not None and admin_pass == secret_password:
             st.success("Unlocked! 🔓")
             uploaded_file = st.file_uploader("Upload Photo", type=['jpg', 'png', 'jpeg'])
@@ -65,13 +66,14 @@ with st.sidebar:
             primary_color = st.color_picker("Accent Color", default_primary)
 
         elif admin_pass != "":
-            st.error("Wrong Password ❌")
+            # رسالة خطأ عامة لا تكشف أي تفاصيل
+            st.error("Access Denied")
 
-        # رسالة تنبيه لك أنت فقط لو نسيت تعمل ملف السيكرتس
-        if secret_password is None:
-            st.warning("⚠️ Please set 'admin_password' in .streamlit/secrets.toml")
+        # تنبيه لك أنت فقط لو نسيت تضبط السيكرتس (لن يظهر للزوار إلا لو جربوا يدخلوا)
+        if secret_password is None and admin_pass:
+            st.warning("⚠️ Configuration Error: No admin password set in secrets.")
 
-        # استخدام القيم الافتراضية للزوار
+        # تطبيق القيم الافتراضية للزوار (أو لو الباسورد غلط)
         if secret_password is None or admin_pass != secret_password:
             design_mode = "Creative Gradient"
             gradient_1 = default_gradient_1
@@ -435,6 +437,7 @@ elif selected_page == "Contact":
             if submit:
                 if name and email and message:
                     # --- Formspree (تأكد من استبدال اللينك) ---
+                    # استبدل YOUR_FORM_ID بالمعرف الخاص بك من formspree
                     form_url = "https://formspree.io/f/YOUR_FORM_ID"
 
                     try:
